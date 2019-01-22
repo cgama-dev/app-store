@@ -1,9 +1,13 @@
 const ProductModel = require('./../models/product.model')
 
+const ValidationContract = require('../validators/fluent-validator')
+
+const RepositoryProduct = require('./../repositories/product.repository')()
+
 const query = async (req, res) => {
     try {
 
-        const products = await ProductModel.find({ active: true }, "title price slug")
+        const products = await RepositoryProduct.query()
 
         return res.status(200).send(products)
 
@@ -16,9 +20,7 @@ const getById = async (req, res) => {
     try {
         const idProduto = req.params.id
 
-        console.log(idProduto)
-
-        const product = await ProductModel.findById(idProduto)
+        const product = await RepositoryProduct.getById(idProduto)
 
         return res.status(200).send(product)
 
@@ -31,10 +33,7 @@ const getBySlug = async (req, res) => {
     try {
         const slug = req.params.slug
 
-        const product = await ProductModel.findOne({
-            slug: slug,
-            active: true
-        }, "title description price tags slug")
+        const product = await RepositoryProduct.getBySlug(slug)
 
         return res.status(200).send(product)
 
@@ -47,10 +46,8 @@ const getByTags = async (req, res) => {
     try {
         const tag = req.params.tag
 
-        const product = await ProductModel.findOne({
-            tags: tag,
-            active: true
-        })
+        const product = await RepositoryProduct.getByTags(tag)
+
         return res.status(200).send(product)
     } catch (err) {
         return res.status(400).send({ message: "Erro ao buscar produto" })
@@ -60,15 +57,21 @@ const getByTags = async (req, res) => {
 const create = async (req, res) => {
     try {
 
-        // const product = await ProductModel.create(req.body)
+        let contract = new ValidationContract();
 
-        // return res.status(200).send({ message: "Produto cadastrado com sucesso", data: product })
+        contract.hasMinLen(req.body.title, 3, 'O título deve conter pelo menos 3 caracteres');
+        contract.hasMinLen(req.body.slug, 3, 'O título deve conter pelo menos 3 caracteres');
+        contract.hasMinLen(req.body.description, 3, 'O título deve conter pelo menos 3 caracteres');
 
-        const product = new ProductModel(req.body)
+        // Se os dados forem inválidos
+        if (!contract.isValid()) {
+            res.status(400).send(contract.errors()).end();
+            return;
+        }
 
-        const result = await product.save()
+        const product = await RepositoryProduct.create(req.body)
 
-        return res.status(200).send({ message: "Produto cadastrado com sucesso", data: result })
+        return res.status(200).send({ message: "Produto cadastrado com sucesso", data: product })
 
     } catch (err) {
         return res.status(400).send({ message: "Erro ao cadastrar o produto", error: err })
@@ -79,7 +82,7 @@ const update = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const product = await ProductModel.findByIdAndUpdate(id, req.body, { new: true })
+        const product = await RepositoryProduct.update(id, req.body)
 
         return res.status(200).send({ message: "Produto atualizado com sucesso", data: product })
 
@@ -92,9 +95,9 @@ const destroy = async (req, res) => {
     try {
         const id = req.params.id;
 
-        const product = await ProductModel.findByIdAndRemove({ _id: id })
+        const product = await RepositoryProduct.destroy(id)
 
-        return res.status(200).send({ message: "Produto deletado com sucesso", produto: product.title })
+        return res.status(200).send({ message: "Produto deletado com sucesso", data: product.title })
 
     } catch (err) {
         return res.status(400).send({ message: "Erro ao Deletar produto", id: id })
