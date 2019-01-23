@@ -1,8 +1,10 @@
 const mongoose = require('mongoose')
 
+const config = require('./../config')
+
 // Conecting db
- mongoose.connect('mongodb://productsuser:products123@ds127730.mlab.com:27730/products', {
-    // useCreateIndex: true,
+ mongoose.connect(config.connectingString, {
+    useCreateIndex: true,
     useNewUrlParser: true
 })
 
