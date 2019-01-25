@@ -10,6 +10,12 @@ const RepositoryCustomer = () => {
         create: (data) => {
             const customer = new CustomerModel(data)
             return customer.save()
+        },
+        authenticate: async (data) => {
+           return CustomerModel.findOne({
+                email: data.email,
+                password: data.password
+            })
         }
     }
 

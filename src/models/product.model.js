@@ -30,10 +30,15 @@ const productSchema = new Schema({
         type: String,
         required: true
     }],
+    image: {
+        type: String,
+        required: false,
+        trim: true
+    },
     createdAt: {
         type: Date,
         default: Date.now
-    },
+    }
 })
 
 const ProductModel = mongoose.model('Product', productSchema)

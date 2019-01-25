@@ -4,6 +4,8 @@ const ValidationContract = require('../validators/fluent-validator')
 
 const RepositoryOrder = require('./../repositories/order.repository')()
 
+const AuthService = require('./../services/auth.service')
+
 const guid = require('guid')
 
 const query = async (req, res) => {
@@ -22,7 +24,7 @@ const getById = async (req, res) => {
     try {
         const idOrder = req.params.id
 
-        const order = await RepositoryCustomer.getById(idOrder)
+        const order = await RepositoryOrder.getById(idOrder)
 
         return res.status(200).send(order)
 
@@ -34,8 +36,12 @@ const getById = async (req, res) => {
 const create = async (req, res) => {
     try {
 
+        const token = req.body.token || req.query.token || req.headers['x-access-token'];
+
+        const data = await AuthService.decodeToken(token)
+
         const order = await RepositoryOrder.create({
-            customer: req.body.customer,
+            customer: data.id,
             number: guid.raw().substring(0, 6),
             items: req.body.items
         })

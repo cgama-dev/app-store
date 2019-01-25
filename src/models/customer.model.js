@@ -13,6 +13,12 @@ const CustomerSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    roles: [{
+        type: String,
+        required: true,
+        enum: ['admin', 'user'],
+        default: 'user'
+    }],
     createdAt: {
         type: Date,
         default: Date.now
