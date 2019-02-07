@@ -1,0 +1,196 @@
+{
+    "swagger": "2.0",
+    "info": {
+        "version": "1.0.0",
+        "title": "Application API WWF",
+        "description": "Yet Another Node.js WWF Application API",
+        "license": {
+            "name": "MIT",
+            "url": ""
+        }
+    },
+    "host": "localhost:5001",
+    "basePath": "/",
+    "tags": [{
+        "name": "Customers",
+        "description": "API for customer in the system"
+    }],
+    "schemes": [
+        "http"
+    ],
+    "consumes": [
+        "application/json"
+    ],
+    "produces": [
+        "application/json"
+    ],
+    "securityDefinitions": {
+        "authorization": {
+            "type": "apiKey",
+            "name": "authorization",
+            "in": "header"
+        }
+    },
+    "paths": {
+        "/customers/authenticate": {
+            "post": {
+                "tags": [
+                    "Customers"
+                ],
+                "description": "Authenticate customers in system",
+                "parameters": [{
+                    "name": "customers",
+                    "in": "body",
+                    "description": "Customers that we want to authenticate",
+                    "schema": {
+                        "$ref": "#/definitions/Customers"
+                    }
+                }],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "The customers is authenticated",
+                        "schema": {
+                            "$ref": "#/definitions/Customers"
+                        }
+                    }
+                }
+            }
+        },
+        "/customers": {
+            "post": {
+                "tags": [
+                    "Customers"
+                ],
+                "description": "Create new customers in system",
+                "parameters": [{
+                    "name": "customers",
+                    "in": "body",
+                    "description": "Customer that we want to create",
+                    "schema": {
+                        "$ref": "#/definitions/Customer"
+                    }
+                }],
+                "produces": [
+                    "application/json"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "New customers is created",
+                        "schema": {
+                            "$ref": "#/definitions/Customers"
+                        }
+                    }
+                }
+            },
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+
+                "summary": "Get all customers in system",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "$ref": "#/definitions/Customers"
+                        }
+                    }
+                },
+                "security": [{
+                    "authorization": []
+                }]
+            }
+        },
+        "/customers/{customersId}": {
+            "parameters": [{
+                "name": "customerId",
+                "in": "path",
+                "required": true,
+                "description": "ID of customers that we want to find",
+                "type": "string"
+            }],
+            "get": {
+                "tags": [
+                    "Customers"
+                ],
+                "summary": "Get customers with given ID",
+                "responses": {
+                    "200": {
+                        "description": "Customer is found",
+                        "schema": {
+                            "$ref": "#/definitions/Customer"
+                        }
+                    }
+                }
+            },
+            "delete": {
+                "summary": "Delete customer with given ID",
+                "tags": [
+                    "Customers"
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Customer is deleted",
+                        "schema": {
+                            "$ref": "#/definitions/Customer"
+                        }
+                    }
+                }
+            },
+            "put": {
+                "summary": "Update customer with give ID",
+                "tags": [
+                    "Customers"
+                ],
+                "parameters": [{
+                    "name": "customer",
+                    "in": "body",
+                    "description": "Customer with new values of properties",
+                    "schema": {
+                        "$ref": "#/definitions/Customer"
+                    }
+                }],
+                "responses": {
+                    "200": {
+                        "description": "Customer is updated",
+                        "schema": {
+                            "$ref": "#/definitions/Customer"
+                        }
+                    }
+                }
+            }
+        }
+    },
+    "definitions": {
+        "Customers": {
+            "required": [
+                "password",
+                "name",
+                "email",
+                "_id"
+            ],
+            "properties": {
+                "_id": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "name": {
+                    "type": "string"
+                },
+                "email": {
+                    "type": "string",
+                    "uniqueItems": true
+                },
+                "password": {
+                    "type": "string"
+                },
+                "roles": {
+                    "type": "string"
+                }
+            }
+        }
+    }
+}

@@ -6,7 +6,7 @@ const { query, getById, create, authenticate, refreshToken } = require('./../con
 
 const AuthService = require('./../services/auth.service')
 
-router.get('/', query)
+router.get('/', AuthService.authorize, query)
 router.get('/:id', getById)
 router.post('/', create)
 router.post('/authenticate', authenticate)
